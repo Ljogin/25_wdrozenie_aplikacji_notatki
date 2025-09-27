@@ -36,7 +36,7 @@ def get_openai_client():
 def transcribe_audio(audio_bytes):
     openai_client = get_openai_client()
     audio_file = BytesIO(audio_bytes)
-    audio_file.name = "audio.mp3"
+    audio_file.name = "audio.wav"
     transcript = openai_client.audio.transcriptions.create(
         file=audio_file,
         model=AUDIO_TRANSCRIBE_MODEL,
@@ -190,7 +190,7 @@ with add_tab:
 
             add_note_to_db(note_text=st.session_state["note_text"])
             st.toast("Notatka zapisana", icon="🎉")"""
-uploaded_file = st.file_uploader("Wgraj plik audio MP3", type=["mp3"])
+uploaded_file = st.file_uploader("Wgraj plik audio wav", type=["wav"])
 
 if uploaded_file is not None:
         st.session_state["note_audio_bytes"] = uploaded_file.read()
@@ -200,7 +200,7 @@ if uploaded_file is not None:
             st.session_state["note_text"] = ""
             st.session_state["note_audio_bytes_md5"] = current_md5
 
-st.audio(st.session_state["note_audio_bytes"], format="audio/mp3")
+st.audio(st.session_state["note_audio_bytes"], format="audio/wav")
 
 if st.button("Transkrybuj audio"):
         st.session_state["note_audio_text"] = transcribe_audio(st.session_state["note_audio_bytes"])
