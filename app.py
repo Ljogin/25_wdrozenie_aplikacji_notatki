@@ -15,8 +15,11 @@ os.environ["PATH"] += os.pathsep + "C:\\ffmpeg\\bin"
 AudioSegment.converter = "C:\\ffmpeg\\bin\\ffmpeg.exe"
 AudioSegment.ffprobe   = "C:\\ffmpeg\\bin\\ffprobe.exe"
 
-
-env = dotenv_values(".env")
+try:
+    env = st.secrets
+except Exception:
+    from dotenv import dotenv_values
+    env = dotenv_values(".env")
 
 EMBEDDING_MODEL = "text-embedding-3-large"
 
