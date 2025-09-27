@@ -30,10 +30,6 @@ AUDIO_TRANSCRIBE_MODEL = "whisper-1"
 
 QDRANT_COLLECTION_NAME = "notes"
 
-import subprocess
-result = subprocess.run(["ffmpeg", "-version"], capture_output=True, text=True)
-st.text(result.stdout)
-
 def get_openai_client():
     return OpenAI(api_key=st.session_state["openai_api_key"])
 
@@ -167,7 +163,7 @@ st.title("Audio Notatki")
 assure_db_collection_exists()
 add_tab, search_tab = st.tabs(["Dodaj notatkę", "Wyszukaj notatkę"])
 with add_tab:
-    note_audio = audiorecorder(
+ """   note_audio = audiorecorder(
         start_prompt="Nagraj notatkę",
         stop_prompt="Zatrzymaj nagrywanie",
     )
@@ -193,7 +189,28 @@ with add_tab:
             qdrant_client = get_qdrant_client()
 
             add_note_to_db(note_text=st.session_state["note_text"])
-            st.toast("Notatka zapisana", icon="🎉")
+            st.toast("Notatka zapisana", icon="🎉")"""
+    uploaded_file = st.file_uploader("Wgraj plik audio MP3", type=["mp3"])
+
+    if uploaded_file is not None:
+        st.session_state["note_audio_bytes"] = uploaded_file.read()
+        current_md5 = md5(st.session_state["note_audio_bytes"]).hexdigest()
+        if st.session_state["note_audio_bytes_md5"] != current_md5:
+            st.session_state["note_audio_text"] = ""
+            st.session_state["note_text"] = ""
+            st.session_state["note_audio_bytes_md5"] = current_md5
+
+    st.audio(st.session_state["note_audio_bytes"], format="audio/mp3")
+
+    if st.button("Transkrybuj audio"):
+        st.session_state["note_audio_text"] = transcribe_audio(st.session_state["note_audio_bytes"])
+
+    if st.session_state["note_audio_text"]:
+        st.session_state["note_text"] = st.text_area("Edytuj notatkę", value=st.session_state["note_audio_text"])
+
+    if st.session_state["note_text"] and st.button("Zapisz notatkę", disabled=not st.session_state["note_text"]):
+        add_note_to_db(note_text=st.session_state["note_text"])
+        st.toast("Notatka zapisana", icon="🎉")
 
 with search_tab:
     query = st.text_input("Wyszukaj notatkę")
