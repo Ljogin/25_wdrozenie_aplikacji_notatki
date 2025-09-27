@@ -1,6 +1,5 @@
 openai
 python-dotenv
-qardant-client
 streamlit
 streamlit-audiorecorder
 pydub
