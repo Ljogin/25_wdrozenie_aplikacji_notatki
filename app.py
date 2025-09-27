@@ -30,6 +30,10 @@ AUDIO_TRANSCRIBE_MODEL = "whisper-1"
 
 QDRANT_COLLECTION_NAME = "notes"
 
+import subprocess
+result = subprocess.run(["ffmpeg", "-version"], capture_output=True, text=True)
+st.text(result.stdout)
+
 def get_openai_client():
     return OpenAI(api_key=st.session_state["openai_api_key"])
 
