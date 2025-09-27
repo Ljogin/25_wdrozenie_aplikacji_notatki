@@ -190,9 +190,9 @@ with add_tab:
 
             add_note_to_db(note_text=st.session_state["note_text"])
             st.toast("Notatka zapisana", icon="🎉")"""
-    uploaded_file = st.file_uploader("Wgraj plik audio MP3", type=["mp3"])
+uploaded_file = st.file_uploader("Wgraj plik audio MP3", type=["mp3"])
 
-    if uploaded_file is not None:
+if uploaded_file is not None:
         st.session_state["note_audio_bytes"] = uploaded_file.read()
         current_md5 = md5(st.session_state["note_audio_bytes"]).hexdigest()
         if st.session_state["note_audio_bytes_md5"] != current_md5:
@@ -200,15 +200,15 @@ with add_tab:
             st.session_state["note_text"] = ""
             st.session_state["note_audio_bytes_md5"] = current_md5
 
-    st.audio(st.session_state["note_audio_bytes"], format="audio/mp3")
+st.audio(st.session_state["note_audio_bytes"], format="audio/mp3")
 
-    if st.button("Transkrybuj audio"):
+if st.button("Transkrybuj audio"):
         st.session_state["note_audio_text"] = transcribe_audio(st.session_state["note_audio_bytes"])
 
-    if st.session_state["note_audio_text"]:
+if st.session_state["note_audio_text"]:
         st.session_state["note_text"] = st.text_area("Edytuj notatkę", value=st.session_state["note_audio_text"])
 
-    if st.session_state["note_text"] and st.button("Zapisz notatkę", disabled=not st.session_state["note_text"]):
+if st.session_state["note_text"] and st.button("Zapisz notatkę", disabled=not st.session_state["note_text"]):
         add_note_to_db(note_text=st.session_state["note_text"])
         st.toast("Notatka zapisana", icon="🎉")
 
