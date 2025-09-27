@@ -163,36 +163,10 @@ st.title("Audio Notatki")
 assure_db_collection_exists()
 add_tab, search_tab = st.tabs(["Dodaj notatkę", "Wyszukaj notatkę"])
 with add_tab:
- """   note_audio = audiorecorder(
-        start_prompt="Nagraj notatkę",
-        stop_prompt="Zatrzymaj nagrywanie",
-    )
-    if note_audio:
-        audio = BytesIO()
-        note_audio.export(audio, format="mp3")
-        st.session_state["note_audio_bytes"] = audio.getvalue()
-        current_md5 = md5(st.session_state["note_audio_bytes"]).hexdigest()
-        if st.session_state["note_audio_bytes_md5"] != current_md5:
-            st.session_state["note_audio_text"] = ""
-            st.session_state["note_text"] = ""
-            st.session_state["note_audio_bytes_md5"] = current_md5
 
-        st.audio(st.session_state["note_audio_bytes"], format="audio/mp3")
+    uploaded_file = st.file_uploader("Wgraj plik audio wav", type=["wav"])
 
-        if st.button("Transkrybuj audio"):
-            st.session_state["note_audio_text"] = transcribe_audio(st.session_state["note_audio_bytes"])
-
-        if st.session_state["note_audio_text"]:
-            st.session_state["note_text"] = st.text_area("Edytuj notatkę", value=st.session_state["note_audio_text"])
-
-        if st.session_state["note_text"] and st.button("Zapisz notatkę", disabled=not st.session_state["note_text"]):
-            qdrant_client = get_qdrant_client()
-
-            add_note_to_db(note_text=st.session_state["note_text"])
-            st.toast("Notatka zapisana", icon="🎉")"""
-uploaded_file = st.file_uploader("Wgraj plik audio wav", type=["wav"])
-
-if uploaded_file is not None:
+    if uploaded_file is not None:
         st.session_state["note_audio_bytes"] = uploaded_file.read()
         current_md5 = md5(st.session_state["note_audio_bytes"]).hexdigest()
         if st.session_state["note_audio_bytes_md5"] != current_md5:
@@ -200,15 +174,15 @@ if uploaded_file is not None:
             st.session_state["note_text"] = ""
             st.session_state["note_audio_bytes_md5"] = current_md5
 
-st.audio(st.session_state["note_audio_bytes"], format="audio/wav")
+    st.audio(st.session_state["note_audio_bytes"], format="audio/wav")
 
-if st.button("Transkrybuj audio"):
+    if st.button("Transkrybuj audio"):
         st.session_state["note_audio_text"] = transcribe_audio(st.session_state["note_audio_bytes"])
 
-if st.session_state["note_audio_text"]:
+    if st.session_state["note_audio_text"]:
         st.session_state["note_text"] = st.text_area("Edytuj notatkę", value=st.session_state["note_audio_text"])
 
-if st.session_state["note_text"] and st.button("Zapisz notatkę", disabled=not st.session_state["note_text"]):
+    if st.session_state["note_text"] and st.button("Zapisz notatkę", disabled=not st.session_state["note_text"]):
         add_note_to_db(note_text=st.session_state["note_text"])
         st.toast("Notatka zapisana", icon="🎉")
 
