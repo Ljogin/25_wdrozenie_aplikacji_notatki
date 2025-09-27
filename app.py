@@ -9,11 +9,12 @@ from qdrant_client.models import PointStruct, Distance, VectorParams
 
 from pydub import AudioSegment
 import os
+import platform
 
-# Ręczne ustawienie ścieżki do ffmpeg i ffprobe
-os.environ["PATH"] += os.pathsep + "C:\\ffmpeg\\bin"
-AudioSegment.converter = "C:\\ffmpeg\\bin\\ffmpeg.exe"
-AudioSegment.ffprobe   = "C:\\ffmpeg\\bin\\ffprobe.exe"
+if platform.system() == "Windows":
+    os.environ["PATH"] += os.pathsep + "C:\\ffmpeg\\bin"
+    AudioSegment.converter = "C:\\ffmpeg\\bin\\ffmpeg.exe"
+    AudioSegment.ffprobe   = "C:\\ffmpeg\\bin\\ffprobe.exe"
 
 try:
     env = st.secrets
